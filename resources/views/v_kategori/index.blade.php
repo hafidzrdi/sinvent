@@ -7,7 +7,7 @@
                 <div class="card">
                 <h1 class="h3 mt-3 ml-3 text-gray-800">Kategori</h1>
                     @if(Session::has('Gagal'))
-                        <div class="alert alert-success" role="alert">
+                        <div class="alert alert-danger" role="alert">
                             {{ Session::get('Gagal') }}
                         </div>
                     @endif

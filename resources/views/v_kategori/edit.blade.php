@@ -11,7 +11,7 @@
                             @method('PUT')
 
                             <div class="form-group">
-                                <label class="font-weight-bold">NAMA KATEGORI</label>
+                                <label class="font-weight-bold">DESKRIPSI</label>
                                 <input type="text" class="form-control @error('kategori') is-invalid @enderror" 
                                 name="deskripsi" value="{{ old('kategori',$rsetKategori->deskripsi) }}" placeholder="Masukkan deskripsi Barang">
                             
@@ -22,6 +22,7 @@
                                     </div>
                                 @enderror
                             </div> 
+
                             <div class="form-group">
                                 <label class="font-weight-bold">KATEGORI</label>
                                 
@@ -36,10 +37,9 @@
                                             @endif
                                         @endforeach
                                     </select>
-
                                 </div>
                                 <!-- error message untuk kategori -->
-                                @error('jenis')
+                                @error('kategori')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
                                     </div>
@@ -47,7 +47,7 @@
                             </div>
 
                             <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
-                            <button type="reset" class="btn btn-md btn-warning">RESET</button>
+                            <a href="{{ route('kategori.index') }}" class="btn btn-md btn-primary">BACK</a>
 
                         </form> 
                     </div>

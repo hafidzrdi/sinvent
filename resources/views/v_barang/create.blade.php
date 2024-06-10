@@ -28,7 +28,7 @@
                                 name="seri" value="{{ old('seri') }}" placeholder="Masukkan Seri Barang">
                             
                                 <!-- error message untuk seri -->
-                                @error('spesifikasi')
+                                @error('seri')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
                                     </div>
@@ -58,11 +58,9 @@
                                             <option value="{{ $kategori->id }}">{{ $kategori->deskripsi }} - {{ $kategori->kategori }} </option>
                                         @endforeach
                                     </select>
-                                    
-
                                 </div>
                                 <!-- error message untuk kategori -->
-                                @error('kategori')
+                                @error('kategori_id')
                                     <div class="alert alert-danger mt-2">
                                         {{ $message }}
                                     </div>
@@ -71,6 +69,7 @@
 
                             <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
                             <button type="reset" class="btn btn-md btn-warning">RESET</button>
+                            <a href="{{ route('barang.index') }}" class="btn btn-md btn-primary">BACK</a>
                         </form> 
                     </div>
                 </div>

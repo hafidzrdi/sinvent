@@ -5,13 +5,26 @@ use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\Kategori;
 use Illuminate\Support\Facades\Storage;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
     public function index()
     {
+        // Eloquent ORM
         $rsetBarang = Barang::latest()->paginate(10);
+
+        // Query Builder error
+        // $rsetBarang = DB::table('barang')
+        // ->select('barang.id', 'barang.merk', 'barang.seri', 'barang.spesifikasi', 'barang.stok', 'barang.kategori_id', 'kategori.deskripsi as kategori_deskripsi')
+        // ->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
+        // ->paginate(10);
+
+        // pakai yg di model error
+        // $rsetKategoriBarang = Kategori::katShowAll()->paginate(10);
+
+
+        // menampilkan ke view
         return view('v_barang.index', compact('rsetBarang'));
     }
 
@@ -23,13 +36,21 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
+        $messages = [
+            'merk.required' => 'Kolom merk tidak boleh kosong.',
+            'seri.required' => 'Kolom seri tidak boleh kosong.',
+            'spesifikasi.required' => 'Kolom spesifikasi tidak boleh kosong.', // Meskipun nullable, tambahkan untuk konsistensi
+            'kategori_id.required' => 'Kolom kategori tidak boleh kosong.',
+            'kategori_id.exists' => 'Kategori yang dipilih tidak valid.',
+        ];
+        
         // Validasi data input
         $request->validate([
             'merk' => 'required|string|max:50',
             'seri' => 'required|string|max:50',
-            'spesifikasi' => 'nullable|string',
+            'spesifikasi' => 'required|string',
             'kategori_id' => 'required|exists:kategori,id',
-        ]);
+        ], $messages);
 
         Barang::create([
             'merk' => $request->merk,
@@ -63,22 +84,29 @@ class BarangController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // // Validasi data input
-        // $request->validate([
-        //     'merk' => 'required|string|max:50',
-        //     'seri' => 'required|string|max:50',
-        //     'spesifikasi' => 'nullable|string',
-        //     'stok' => 'required|integer|min:0',
-        //     'kategori_id' => 'required|exists:kategori,id',
-        // ]);
-
         $rsetBarang = Barang::find($id);
+
+        $messages = [
+            'merk.required' => 'Kolom merk tidak boleh kosong.',
+            'seri.required' => 'Kolom seri tidak boleh kosong.',
+            'spesifikasi.required' => 'Kolom spesifikasi tidak boleh kosong.', // Meskipun nullable, tambahkan untuk konsistensi
+            'kategori_id.required' => 'Kolom kategori tidak boleh kosong.',
+            'kategori_id.exists' => 'Kategori yang dipilih tidak valid.',
+        ];
+        
+        // Validasi data input
+        $request->validate([
+            'merk' => 'required|string|max:50',
+            'seri' => 'required|string|max:50',
+            'spesifikasi' => 'required|string',
+            'kategori_id' => 'required|exists:kategori,id',
+        ], $messages);
 
         $rsetBarang->update([
             'merk' => $request->merk,
             'seri' => $request->seri,
             'spesifikasi' => $request->spesifikasi,
-            'stok' => $request->stok,
+            // 'stok' => $request->stok,
             'kategori_id' => $request->kategori_id,
         ]);
 

@@ -18,7 +18,7 @@ class Kategori extends Model
 
     public static function getKategoriAll(){
         return DB::table('kategori')
-                    ->select('kategori.id','deskripsi',DB::raw('ketKategori(kategori) as ketkategori'));
+                    ->select('id','deskripsi','kategori',DB::raw('getKetKategori(kategori) as ketKategori'));
     }
 
     public static function katShowAll(){
@@ -30,9 +30,9 @@ class Kategori extends Model
 
     public static function showKategoriById($id){
         return DB::table('kategori')
-                ->join('barangg','kategori.id','=','barangg.kategori_id')
-                ->select('barangg.id','kategori.deskripsi',DB::raw('ketKategori(kategori.kategori) as ketkategori'),
-                         'barangg.merk','barangg.seri','barangg.spesifikasi','barangg.stok')
+                ->join('barang','kategori.id','=','barang.kategori_id')
+                ->select('barang.id','kategori.deskripsi',DB::raw('getKetKategori(kategori.kategori) as ketkategori'),
+                         'barang.merk','barang.seri','barang.spesifikasi','barang.stok')
                 ->get();
 
     }

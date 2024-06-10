@@ -20,28 +20,21 @@ class BarangkeluarController extends Controller
         return view('v_barangkeluar.create', compact('barangOptions'));
     }
 
-    // public function store(Request $request)
-    // {
-        
-    //     Barangkeluar::create([
-    //         'tgl_keluar'          => $request->tgl_keluar,
-    //         'qty_keluar'          => $request->qty_keluar,
-    //         'barang_id'          => $request->barang_id,
-    //     ]);
-
-        
-
-    //     return redirect()->route('barangkeluar.index')->with(['success' => 'Data Berhasil Ditambah!']);
-    // }
-
     public function store(Request $request)
     {
+        // pesan error
+        $messages = [
+            'tgl_keluar.required' => 'Kolom Tanggal keluar tidak boleh kosong.',
+            'qty_keluar.required' => 'Kolom Jumlah keluar tidak boleh kosong.',
+            'barang_id.required' => 'Kolom Barang tidak boleh kosong.', 
+            'barang_id.exists' => 'Barang yang dipilih tidak valid.',
+        ];
         // Validasi data input
         $request->validate([
             'tgl_keluar' => 'required|date',
             'qty_keluar' => 'required|integer|min:1',
             'barang_id' => 'required|exists:barang,id',
-        ]);
+        ], $messages);
 
         // Ambil data barang berdasarkan ID
         $barang = Barang::find($request->barang_id);
@@ -67,8 +60,6 @@ class BarangkeluarController extends Controller
         return redirect()->route('barangkeluar.index')->with(['success' => 'Data Berhasil Ditambah!']);
     }
 
-
-    
     public function show(string $id)
     {
         $rsetBarangkeluar = Barangkeluar::find($id);
@@ -85,6 +76,18 @@ class BarangkeluarController extends Controller
 
     public function update(Request $request, string $id)
     {
+        // pesan error
+        $messages = [
+            'tgl_keluar.required' => 'Kolom Tanggal keluar tidak boleh kosong.',
+            'qty_keluar.required' => 'Kolom Jumlah keluar tidak boleh kosong.',
+            'qty_keluar.min' => 'Nilai Input minimal 1!',
+        ];
+
+        $request->validate([
+            'tgl_keluar' => 'required|date',
+            'qty_keluar' => 'required|integer|min:1',
+        ], $messages);
+
         $rsetBarangkeluar = Barangkeluar::find($id);
 
             $rsetBarangkeluar->update([

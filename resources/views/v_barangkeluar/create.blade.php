@@ -56,7 +56,7 @@
                             </div>
                             <button type="submit" class="btn btn-md btn-primary">SIMPAN</button>
                             <button type="reset" class="btn btn-md btn-warning">RESET</button>
-
+                            <a href="{{ route('barangkeluar.index') }}" class="btn btn-md btn-primary">BACK</a>
                         </form> 
                     </div>
                 </div>

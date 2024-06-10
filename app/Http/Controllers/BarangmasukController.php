@@ -22,12 +22,20 @@ class BarangmasukController extends Controller
 
     public function store(Request $request)
     {
+        // pesan error
+        $messages = [
+            'tgl_masuk.required' => 'Kolom Tanggal Masuk tidak boleh kosong.',
+            'qty_masuk.required' => 'Kolom Jumlah Masuk tidak boleh kosong.',
+            'barang_id.required' => 'Kolom Barang tidak boleh kosong.', 
+            'barang_id.exists' => 'Barang yang dipilih tidak valid.',
+        ];
+
         // Validasi data input
         $request->validate([
             'tgl_masuk' => 'required|date',
             'qty_masuk' => 'required|integer|min:1',
             'barang_id' => 'required|exists:barang,id',
-        ]);
+        ], $messages);
 
         // Simpan data barang masuk ke database
         Barangmasuk::create([
@@ -35,11 +43,6 @@ class BarangmasukController extends Controller
             'qty_masuk' => $request->qty_masuk,
             'barang_id' => $request->barang_id,
         ]);
-
-        // Update stok barang
-        // $barang = Barang::find($request->barang_id);
-        // $barang->stok += $request->qty_masuk;
-        // $barang->save();
 
         return redirect()->route('barangmasuk.index')->with('success', 'Data barang masuk berhasil ditambah');
     }
@@ -59,11 +62,19 @@ class BarangmasukController extends Controller
 
     public function update(Request $request, string $id)
     {
+
+        // pesan error
+        $messages = [
+            'tgl_masuk.required' => 'Kolom Tanggal Masuk tidak boleh kosong.',
+            'qty_masuk.required' => 'Kolom Jumlah Masuk tidak boleh kosong.',
+            'qty_masuk.min' => 'Nilai Input minimal 1!',
+        ];
+
         // Validasi data input
         $request->validate([
             'tgl_masuk' => 'required|date',
             'qty_masuk' => 'required|integer|min:1',
-        ]);
+        ], $messages);
 
         // Ambil data barang masuk yang akan diupdate
         $rsetBarangmasuk = Barangmasuk::find($id);
@@ -85,10 +96,6 @@ class BarangmasukController extends Controller
             'tgl_masuk' => $request->tgl_masuk,
             'qty_masuk' => $request->qty_masuk,
         ]);
-
-        // // Update stok barang
-        // $barang->stok = $stokBaru;
-        // $barang->save();
 
         return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Diubah!']);
     }
