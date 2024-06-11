@@ -15,7 +15,7 @@ class KategoriController extends Controller
     {  
 
         // query builder
-        $rsetKategori = DB::table('kategori')->select('id','deskripsi', 'kategori',DB::raw('getKetKategori(kategori) as ketKategori'))->paginate(10);
+        $rsetKategori = DB::table('kategori')->select('id','deskripsi', 'kategori',DB::raw('getKetKategori(kategori) as ketKategori'))->get();
 
         // pakai yg di model
         // $rsetKategori = Kategori::getKategoriAll()->paginate(10);

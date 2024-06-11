@@ -6,15 +6,17 @@ use App\Http\Controllers\BarangmasukController;
 use App\Http\Controllers\BarangkeluarController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SearchController;
 
 Route::get('/', function () {
-    return view('auth.login');
+    return view('/welcome');
 });
 
 Route::resource('kategori',KategoriController::class)->middleware('auth');
 Route::resource('barang', BarangController::class)->middleware('auth');
 Route::resource('barangmasuk', BarangmasukController::class)->middleware('auth');
 Route::resource('barangkeluar', BarangkeluarController::class)->middleware('auth');
+// Route::resource('search', BarangController::class)->middleware('auth');
 
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -27,3 +29,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', [HomeController::class, 'index']);
     Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// search
+Route::get('/search_barang', [SearchController::class, 'search_barang'])->name('search_barang')->middleware('auth');
+Route::get('/search_kategori', [SearchController::class, 'search_kategori'])->name('search_kategori')->middleware('auth');

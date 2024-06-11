@@ -11,7 +11,7 @@ class Barang extends Model
     protected $table = 'barang';
 
     protected $fillable = ['merk','seri','spesifikasi','kategori_id'];
-
+    
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);

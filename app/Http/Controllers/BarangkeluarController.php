@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Barangkeluar;
+use App\Models\Barangmasuk;
 use App\Models\Barang;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
@@ -22,43 +23,69 @@ class BarangkeluarController extends Controller
 
     public function store(Request $request)
     {
-        // pesan error
-        $messages = [
-            'tgl_keluar.required' => 'Kolom Tanggal keluar tidak boleh kosong.',
-            'qty_keluar.required' => 'Kolom Jumlah keluar tidak boleh kosong.',
-            'barang_id.required' => 'Kolom Barang tidak boleh kosong.', 
-            'barang_id.exists' => 'Barang yang dipilih tidak valid.',
-        ];
-        // Validasi data input
-        $request->validate([
-            'tgl_keluar' => 'required|date',
-            'qty_keluar' => 'required|integer|min:1',
-            'barang_id' => 'required|exists:barang,id',
-        ], $messages);
+        
+    // Pesan error
+    $messages = [
+        'tgl_keluar.required' => 'Kolom Tanggal keluar tidak boleh kosong.',
+        'qty_keluar.required' => 'Kolom Jumlah keluar tidak boleh kosong.',
+        'qty_keluar.min' => 'Nilai Input minimal 1!',
+        'barang_id.required' => 'Kolom Barang tidak boleh kosong.',
+        'barang_id.exists' => 'Barang yang dipilih tidak valid.',
+        'tgl_keluar.before_or_equal' => 'Tanggal keluar tidak boleh mendahului tanggal paling awal di barang masuk.',
+    ];
 
+    // Dapatkan tanggal masuk paling awal
+    $earliestTglMasuk = Barangmasuk::min('tgl_masuk');
+    // return $earliestTglMasuk;
+
+    // Validasi data input
+    $request->validate([
+        'tgl_keluar' => ['required', 'date', function ($attribute, $value, $fail) use ($earliestTglMasuk) {
+            if ($value < $earliestTglMasuk) {
+                $fail('Tanggal keluar tidak boleh mendahului tanggal paling awal di barang masuk.');
+            }
+        }],
+        'qty_keluar' => 'required|integer|min:1',
+        'barang_id' => 'required|exists:barang,id',
+    ], $messages);
+
+    // Check udah ada tanggal yang sama belum
+    $existingBarangKeluar = Barangkeluar::where('tgl_keluar', $request->tgl_keluar)->first();
+
+    if ($existingBarangKeluar) {
+        // Update record yang sudah ada
+        $existingBarangKeluar->update([
+            'qty_keluar' => $request->qty_keluar,
+            'barang_id' => $request->barang_id,
+        ]);
+        $message = 'Data barang keluar berhasil diperbarui';
+    } else {
         // Ambil data barang berdasarkan ID
         $barang = Barang::find($request->barang_id);
 
-        // Periksa stok barang
+        // Cek stok barang
         if ($barang->stok <= 0) {
             return redirect()->route('barangkeluar.index')->with(['Gagal' => 'Stok barang habis, tidak bisa menambahkan barang keluar!']);
         } elseif ($barang->stok < $request->qty_keluar) {
             return redirect()->route('barangkeluar.index')->with(['Gagal' => 'Stok barang tidak mencukupi untuk jumlah barang keluar yang diminta!']);
         }
 
-        // Jika stok mencukupi, tambah data barang keluar
+        // Tambah record baru
         Barangkeluar::create([
             'tgl_keluar' => $request->tgl_keluar,
             'qty_keluar' => $request->qty_keluar,
             'barang_id' => $request->barang_id,
         ]);
+        $message = 'Data barang keluar berhasil ditambah';
 
         // Kurangi stok barang
         $barang->stok -= $request->qty_keluar;
         $barang->save();
-
-        return redirect()->route('barangkeluar.index')->with(['success' => 'Data Berhasil Ditambah!']);
     }
+
+    return redirect()->route('barangkeluar.index')->with('success', $message);
+}
+
 
     public function show(string $id)
     {

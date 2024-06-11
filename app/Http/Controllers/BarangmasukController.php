@@ -22,10 +22,11 @@ class BarangmasukController extends Controller
 
     public function store(Request $request)
     {
-        // pesan error
+        // Pesan error
         $messages = [
             'tgl_masuk.required' => 'Kolom Tanggal Masuk tidak boleh kosong.',
             'qty_masuk.required' => 'Kolom Jumlah Masuk tidak boleh kosong.',
+            'qty_masuk.min' => 'Nilai Input minimal 1!',
             'barang_id.required' => 'Kolom Barang tidak boleh kosong.', 
             'barang_id.exists' => 'Barang yang dipilih tidak valid.',
         ];
@@ -37,14 +38,27 @@ class BarangmasukController extends Controller
             'barang_id' => 'required|exists:barang,id',
         ], $messages);
 
-        // Simpan data barang masuk ke database
-        Barangmasuk::create([
-            'tgl_masuk' => $request->tgl_masuk,
-            'qty_masuk' => $request->qty_masuk,
-            'barang_id' => $request->barang_id,
-        ]);
+        // Check udah ada tanggal yang sama belum
+        $existingBarangMasuk = Barangmasuk::where('tgl_masuk', $request->tgl_masuk)->first();
 
-        return redirect()->route('barangmasuk.index')->with('success', 'Data barang masuk berhasil ditambah');
+        if ($existingBarangMasuk) {
+            // update record yang sudah ada
+            $existingBarangMasuk->update([
+                'qty_masuk' => $request->qty_masuk,
+                'barang_id' => $request->barang_id,
+            ]);
+            $message = 'Data barang masuk berhasil diperbarui';
+        } else {
+            // tambah record baru
+            Barangmasuk::create([
+                'tgl_masuk' => $request->tgl_masuk,
+                'qty_masuk' => $request->qty_masuk,
+                'barang_id' => $request->barang_id,
+            ]);
+            $message = 'Data barang masuk berhasil ditambah';
+        }
+
+        return redirect()->route('barangmasuk.index')->with('success', $message);
     }
 
     public function show(string $id)
@@ -100,6 +114,8 @@ class BarangmasukController extends Controller
         return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Diubah!']);
     }
 
+
+
     // public function destroy($id)
     // {
     //     $barangmasuk = Barangmasuk::findOrFail($id);
@@ -128,7 +144,7 @@ class BarangmasukController extends Controller
     {
         $barangmasuk = Barangmasuk::findOrFail($id);
 
-        // Check if deleting the barangmasuk entry would result in negative stock
+        // cek 
         $barang = Barang::find($barangmasuk->barang_id);
         $new_stock = $barang->stok - $barangmasuk->qty_masuk;
 

@@ -4,17 +4,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Barang;
 use App\Models\Kategori;
+use App\Models\BKV;
+use App\Http\Controllers\KategoriController;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+// use App\Models\Barang_Kategori_View;
 
 class BarangController extends Controller
 {
     public function index()
     {
         // Eloquent ORM
-        $rsetBarang = Barang::latest()->paginate(10);
+        $rsetBarang = BKV::latest()->get();
+        // return $rsetBarang;
 
         // Query Builder error
+        // $rsetBarang = DB::table('barang')->select('id','merk', 'seri','spesifikasi','stok','kategori.deskripsi','kategori.kategori', kategori.DB::raw('getKetKategori(kategori) as ketKategori'))->get();
+
+
         // $rsetBarang = DB::table('barang')
         // ->select('barang.id', 'barang.merk', 'barang.seri', 'barang.spesifikasi', 'barang.stok', 'barang.kategori_id', 'kategori.deskripsi as kategori_deskripsi')
         // ->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
@@ -27,6 +34,19 @@ class BarangController extends Controller
         // menampilkan ke view
         return view('v_barang.index', compact('rsetBarang'));
     }
+
+    // public function search(Request $request)
+    // {
+    //     $query = $request->input('query');
+
+    //     $results = Barang::where('merk', 'like', "%$query%")
+    //         ->orWhere('seri', 'like', "%$query%")
+    //         ->orWhere('spesifikasi', 'like', "%$query%")
+    //         ->with('kategori')
+    //         ->get();
+
+    //     return view('v_barang.result', compact('results'));
+    // }
 
     public function create()
     {

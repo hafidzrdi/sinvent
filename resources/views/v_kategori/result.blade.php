@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <h1 class="h3 mt-3 ml-3 text-gray-800">Kategori</h1>
+                <h1 class="h3 mt-3 ml-3 text-gray-800">Kategori</h1>
                     @if(Session::has('Gagal'))
                         <div class="alert alert-danger" role="alert">
                             {{ Session::get('Gagal') }}
@@ -18,19 +18,17 @@
                         </div>
                     @endif
                     <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <a href="{{ route('kategori.create') }}" class="btn btn-md btn-success">TAMBAH KATEGORI</a>
-                            <form action="{{ route('search_kategori') }}" method="get" class="form-inline d-flex mw-100 navbar-search">
-                                <div class="input-group">
-                                    <input type="text" name="query" class="form-control bg-light border-0 small" placeholder="Cari Kategori..." aria-label="Search" aria-describedby="basic-addon2" value="{{ request('query') }}">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="fas fa-search fa-sm"></i>
-                                        </button>
-                                    </div>
+                        <a href="{{ route('kategori.create') }}" class="btn btn-md btn-success mb-3">TAMBAH KATEGORI</a>
+                        <form action="{{ route('search_kategori') }}" method="get" class="form-inline d-flex mw-100 navbar-search">
+                            <div class="input-group">
+                                <input type="text" name="query" class="form-control bg-light border-0 small" placeholder="Cari Barang..." aria-label="Search" aria-describedby="basic-addon2" value="{{ request('query') }}">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search fa-sm"></i>
+                                    </button>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <table class="table table-bordered">
@@ -44,7 +42,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($rsetKategori as $kategori)
+                        @forelse ($results as $kategori)
                             <tr>
                                 <td>{{ $kategori->id  }}</td>
                                 <td>{{ $kategori->deskripsi  }}</td>
@@ -69,7 +67,7 @@
                             </tr>
                         @empty
                             <div class="alert">
-                                Data Kategori belum tersedia
+                                Data Barang belum tersedia
                             </div>
                         @endforelse
                     </tbody>

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->smallInteger('stok')->default(0);
             $table->tinyInteger('kategori_id')->unsigned();
             $table->foreign('kategori_id')->references('id')->on('kategori')
-                  ->onUpdate('cascade')
+                  ->onUpdate('cascade') ///gausah
                   ->onDelete('restrict');
             $table->timestamps();
         });
