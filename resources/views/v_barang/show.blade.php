@@ -25,11 +25,11 @@
                             </tr>
                             <tr>
                                 <td>Deskripsi</td>
-                                <td>{{ $rsetBarang->kategori->deskripsi }}</td>
+                                <td>{{ $rsetKategori->deskripsi }}</td>
                             </tr>
                             <tr>
                                 <td>Kategori</td>
-                                <td>{{ $rsetBarang->kategori->kategori }}</td>
+                                <td>{{ $rsetKategori->ketKategori }}</td>
                             </tr>
                         </table>
                     </div>

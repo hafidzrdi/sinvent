@@ -33,7 +33,6 @@
                                         <option value="BHP">BHP - Barang Habis Pakai</option>
                                         <option value="BTHP">BTHP - Barang Tidak Habis Pakai</option>
                                     </select>
-
                                 </div>
                                 <!-- error message untuk kategori -->
                                 @error('kategori')

@@ -13,10 +13,4 @@ class BKV extends Model
         'barang_id', 'merk', 'seri', 'spesifikasi', 'stok', 'kategori_id',
         'deskripsi', 'kategori', 'ketKategori', 'created_at', 'updated_at'
     ];
-    // protected $fillable = ['merk','seri','spesifikasi','kategori_id'];
-    
-    // public function kategori()
-    // {
-    //     return $this->belongsTo(Kategori::class);
-    // }
 }

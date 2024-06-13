@@ -14,39 +14,12 @@ class BarangController extends Controller
 {
     public function index()
     {
-        // Eloquent ORM
+        // Eloquent ORM (ambil data di view)
         $rsetBarang = BKV::latest()->get();
-        // return $rsetBarang;
-
-        // Query Builder error
-        // $rsetBarang = DB::table('barang')->select('id','merk', 'seri','spesifikasi','stok','kategori.deskripsi','kategori.kategori', kategori.DB::raw('getKetKategori(kategori) as ketKategori'))->get();
-
-
-        // $rsetBarang = DB::table('barang')
-        // ->select('barang.id', 'barang.merk', 'barang.seri', 'barang.spesifikasi', 'barang.stok', 'barang.kategori_id', 'kategori.deskripsi as kategori_deskripsi')
-        // ->join('kategori', 'barang.kategori_id', '=', 'kategori.id')
-        // ->paginate(10);
-
-        // pakai yg di model error
-        // $rsetKategoriBarang = Kategori::katShowAll()->paginate(10);
-
 
         // menampilkan ke view
         return view('v_barang.index', compact('rsetBarang'));
     }
-
-    // public function search(Request $request)
-    // {
-    //     $query = $request->input('query');
-
-    //     $results = Barang::where('merk', 'like', "%$query%")
-    //         ->orWhere('seri', 'like', "%$query%")
-    //         ->orWhere('spesifikasi', 'like', "%$query%")
-    //         ->with('kategori')
-    //         ->get();
-
-    //     return view('v_barang.result', compact('results'));
-    // }
 
     public function create()
     {
@@ -56,10 +29,11 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
+        // pesan error
         $messages = [
             'merk.required' => 'Kolom merk tidak boleh kosong.',
             'seri.required' => 'Kolom seri tidak boleh kosong.',
-            'spesifikasi.required' => 'Kolom spesifikasi tidak boleh kosong.', // Meskipun nullable, tambahkan untuk konsistensi
+            'spesifikasi.required' => 'Kolom spesifikasi tidak boleh kosong.',
             'kategori_id.required' => 'Kolom kategori tidak boleh kosong.',
             'kategori_id.exists' => 'Kategori yang dipilih tidak valid.',
         ];
@@ -72,6 +46,7 @@ class BarangController extends Controller
             'kategori_id' => 'required|exists:kategori,id',
         ], $messages);
 
+        // tambah record baru
         Barang::create([
             'merk' => $request->merk,
             'seri' => $request->seri,
@@ -85,13 +60,9 @@ class BarangController extends Controller
     public function show(string $id)
     {
         $rsetBarang = Barang::find($id);
-        $rsetKategori = Kategori::select('id', 'deskripsi', 'kategori',
-            \DB::raw('(CASE
-                WHEN kategori = "M" THEN "Modal"
-                WHEN kategori = "A" THEN "Alat"
-                WHEN kategori = "BHP" THEN "Bahan Habis Pakai"
-                ELSE "Bahan Tidak Habis Pakai"
-                END) AS ketKategori'));
+        $rsetKategori = Kategori::select('id', 'deskripsi', 'kategori', DB::raw('getKetKategori(kategori) as ketKategori'))
+        ->where ('id',$rsetBarang->kategori_id)
+        ->first();
         return view('v_barang.show', compact('rsetBarang', 'rsetKategori'));
     }
 

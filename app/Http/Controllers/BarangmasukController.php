@@ -114,32 +114,6 @@ class BarangmasukController extends Controller
         return redirect()->route('barangmasuk.index')->with(['success' => 'Data Berhasil Diubah!']);
     }
 
-
-
-    // public function destroy($id)
-    // {
-    //     $barangmasuk = Barangmasuk::findOrFail($id);
-
-    //     // Check if there are any related barangkeluar entries
-    //     $barangkeluar = Barangkeluar::where('barang_id', $barangmasuk->barang_id)
-    //         ->where('tgl_keluar', '>=', $barangmasuk->tgl_masuk)
-    //         ->first();
-
-    //     if ($barangkeluar) {
-    //         return redirect()->route('barangmasuk.index')->with('Gagal', 'Tidak dapat menghapus barang masuk karena ada barang keluar terkait.');
-    //     }
-
-    //     // Reduce the stock before deleting
-    //     $barang = Barang::find($barangmasuk->barang_id);
-    //     $barang->stok -= $barangmasuk->qty_masuk;
-    //     $barang->save();
-
-    //     // Hapus data barang masuk berdasarkan ID
-    //     $barangmasuk->delete();
-
-    //     return redirect()->route('barangmasuk.index')->with('success', 'Data barang masuk berhasil dihapus');
-    // }
-
     public function destroy($id)
     {
         $barangmasuk = Barangmasuk::findOrFail($id);
@@ -152,18 +126,14 @@ class BarangmasukController extends Controller
             return redirect()->route('barangmasuk.index')->with('Gagal', 'Tidak dapat menghapus barang masuk karena stok akan menjadi minus.');
         }
 
-        // // Check if there are any related barangkeluar entries
-        // $barangkeluar = Barangkeluar::where('barang_id', $barangmasuk->barang_id)
-        //     ->where('tgl_keluar', '>=', $barangmasuk->tgl_masuk)
-        //     ->first();
+        // Check if there are any related barangkeluar entries
+        $barangkeluar = Barangkeluar::where('barang_id', $barangmasuk->barang_id)
+            ->where('tgl_keluar', '>=', $barangmasuk->tgl_masuk)
+            ->first();
 
-        // if ($barangkeluar) {
-        //     return redirect()->route('barangmasuk.index')->with('Gagal', 'Tidak dapat menghapus barang masuk karena ada barang keluar terkait.');
-        // }
-
-        // Reduce the stock before deleting
-        // $barang->stok -= $barangmasuk->qty_masuk;
-        // $barang->save();
+        if ($barangkeluar) {
+            return redirect()->route('barangmasuk.index')->with('Gagal', 'Tidak dapat menghapus barang masuk karena ada barang keluar terkait.');
+        }
 
         // Hapus data barang masuk berdasarkan ID
         $barangmasuk->delete();
